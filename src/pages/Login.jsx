@@ -1,7 +1,7 @@
 import React from 'react'
 import { assets } from '../assets/assets'
 import { Star } from 'lucide-react'
-
+import {SignIn} from '@clerk/react'
 const Login = () => {
   return (
     <div className='relative min-h-screen flex flex-col md:flex-row'>
@@ -42,30 +42,11 @@ const Login = () => {
         </p>
 
       </div>
+      <span className='md:h-10'></span>
 
       {/* Right side: Login Form */}
       <div className='flex-1 flex items-center justify-center p-6 sm:p-10'>
-        <div className='w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8'>
-          
-          <h2 className='text-2xl font-semibold mb-6 text-center'>Login</h2>
-
-          <form className='flex flex-col gap-4'>
-            <input
-              type='email'
-              placeholder='Email'
-              className='p-3 rounded-lg border outline-none focus:ring-2 focus:ring-indigo-400'
-            />
-            <input
-              type='password'
-              placeholder='Password'
-              className='p-3 rounded-lg border outline-none focus:ring-2 focus:ring-indigo-400'
-            />
-            <button className='bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition'>
-              Sign In
-            </button>
-          </form>
-
-        </div>
+        <SignIn />
       </div>
 
     </div>
