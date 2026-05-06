@@ -1,16 +1,64 @@
-# React + Vite
+# Groove 🎵
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Groove is a modern social media web application built with React and Vite.  
+Users can connect, share moments, and explore new experiences in a clean and responsive interface.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Modern responsive UI
+- Authentication with Clerk
+- React Router navigation
+- Beautiful login page
+- Fast development with Vite
+- Tailwind CSS styling
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- Vite
+- Tailwind CSS
+- Clerk Authentication
+- React Router
+- Lucide React Icons
 
-## Expanding the ESLint configuration
+## 📦 Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Clone the repository:
+
+```bash
+git clone <your-repo-url>
+```
+
+Navigate into the project:
+
+```bash
+cd client
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+## 🔐 Environment Variables
+
+Create a `.env` file in the root directory and add:
+
+```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
+```
+
+## 📸 Preview
+
+Coming soon...
+
+## 📄 License
+
+This project is for learning and personal development.
