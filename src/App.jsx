@@ -8,14 +8,14 @@ import CreatePost from './pages/CreatePost'
 import Messages from './pages/Messages'
 import ChatBox from './pages/ChatBox'
 import { useUser } from '@clerk/react'
-import { Layout } from 'lucide-react'
+import Layout from './pages/Layout'
 
 const App = () => {
   const {user}=useUser()
   return (
     <>
     <Routes>
-      <Route path='/' element={!user ?<Login/>:<Layoutt />}>
+      <Route path='/' element={!user ?<Login/>:<Layout />}>
         <Route index element={<Feed/>}/>
         <Route path='messages' element={<Messages/>}/>
         <Route path='messages/:id' element={<ChatBox/>}/>
