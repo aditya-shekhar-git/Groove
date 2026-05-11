@@ -1,6 +1,6 @@
 # Groove 🎵
 
-Groove is a modern social media web application built with React and Vite.  
+Groove is a modern social media web application built with React, Vite, Node and MongoDB.  
 Users can connect, share moments, and explore new experiences in a clean and responsive interface.
 
 ## 🚀 Features
