@@ -16,7 +16,7 @@ const Login = () => {
       {/* Left side: Branding */}
       <div className='flex-1 flex flex-col items-center justify-between p-6 md:p-10 lg:p-40'>
         
-        <img src={assets.logo} alt="Branding" className='h-12 object-contain' />
+       <img src={assets.logo} alt="Branding" className="h-24 w-auto object-contain"/>
 
         <div className='flex items-center gap-3 mb-4 max-md:mt-10'>
           <img src={assets.group_users} alt="" className='h-8 md:h-10' />

@@ -15,7 +15,7 @@ const App = () => {
   return (
     <>
     <Routes>
-      <Route path='/' element={!user ?<Login/>:<Layout />}>
+      <Route path='/' element={!user ? <Login /> : <Layout />}>
         <Route index element={<Feed/>}/>
         <Route path='messages' element={<Messages/>}/>
         <Route path='messages/:id' element={<ChatBox/>}/>
@@ -23,6 +23,7 @@ const App = () => {
         <Route path='profile' element={<Profile/>}/>
         <Route path='profile/:id' element={<Profile/>}/>
         <Route path='create-post' element={<CreatePost/>}/>
+        <Route path='connections' element={<div>Connections</div>}/>
       </Route>
     </Routes>
     </>
