@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { dummyPostsData } from '../assets/assets'
 import Loading from '../components/Loading'
+import StoriesBar from '../components/StoriesBar'
 
 const Feed = () => {
 
@@ -20,12 +21,18 @@ const Feed = () => {
 
       {/*Stories and post list */}
       <div>
-        <h1>Stories here</h1>
+        <StoriesBar />
         <div className='p-4 space-y-6'>
           List of post
         </div>
       </div>
       {/* Right Sidebar */}
+       <div>
+        <div>
+          <h1>Sponserd</h1>
+        </div>
+        <h1>Recent Messages</h1>
+       </div>
     </div>
   ) : (
     <Loading />
