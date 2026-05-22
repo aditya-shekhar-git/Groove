@@ -1,16 +1,24 @@
 import React from 'react'
 import {useState} from 'react'
-import {ArrowLeft} from 'lucide-react'
+import {ArrowLeft,  Star,  TextIcon, Upload} from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const StoryModal = ({setShowModal, fetchStories}) => {
 
-  const bgColors =["#4f46e5","#7c3aed","#db277","#elld48","#ca8a04","#0d9488"]
+  const bgColors = [
+    "#4f46e5",
+    "#7c3aed",
+    "#db2777",
+    "#e11d48",
+    "#ca8a04",
+    "#0d9488"
+  ]
 
   const [mode,setMode]=useState("text")
   const [background,setBackground]=useState(bgColors[0])
   const [text,setText]=useState("")
-  const [media,setMedia]=useState("null")
-  const [previewUrl,setPreviewUrl]=useState("null")
+  const [media,setMedia]=useState(null)
+  const [previewUrl,setPreviewUrl]=useState(null)
 
   const handleMediaUpload=(e)=>{
     const file=e.target.files?.[0]
@@ -35,9 +43,54 @@ const StoryModal = ({setShowModal, fetchStories}) => {
           <h2 className='text-lg font-semibold'>Create Story</h2>
           <span className='w-10'></span>
         </div>
+
+        <div className='rounded-lg h-96 flex items-center justify-center relative' style={{backgroundColor:background}}> 
+
+          {mode==="text" && (
+            <textarea value={text} onChange={(e)=>setText(e.target.value)} placeholder= "What's on your mind?" className='w-full h-full bg-transparent text-white p-4 resize-none outline-none text-center text-lg'/>
+          )}
+
+          {mode=="media" && previewUrl && (
+            media?.type.startsWith('image')?(
+            <img src={previewUrl} className='object-contain max-h-full'/>
+            ) : (
+              <video src={previewUrl} className='object-contain max-h-full'/>
+            )
+          )}
+        </div>
+
+        <div className='flex mt-4 gap-2'>
+          {bgColors.map((color)=>(
+            <button key={color} className='w-6 h-6 rounded-full ring cursor-pointer' style={{backgroundColor:color}} onClick={()=>{
+              setBackground(color)}}/>
+          ))}
+        </div>
+
+        <div className='flex gap-2 mt-4 '> 
+          <button onClick={()=>{setMedia(null),setMode('text'),setPreviewUrl(null)}} className={`flex-1 flex items-center justify-center gap-2 p-2 rounded cursor-pointer ${mode=== "text" ? "bg-white text-black" : "bg-zinc-800"}`}>
+            <TextIcon size={18}/>Text
+          </button>
+          <label className={`flex-1 flex items-center justify-center gap-2 p-2 rounded cursor-pointer ${mode === 'media'? "bg-white text-black" : "bg-zinc-800"}` }>
+            <input onChange={(e)=>{handleMediaUpload(e);setMode('media')}} type="file" accept='image/*,video/*' className='hidden' />
+           
+             <Upload size={18}/>Photo/Video
+          
+          </label>
+        </div>
+
+          <button onClick={()=>{
+            toast.promise(handleCreateStory,{
+              loading:"Saving...",
+              success:<p>Story Added</p>,
+              error:(e)=><p>{e.message}</p>
+            })
+          }} className='flex items-center justify-center text-white py-3 mt-4 gap-2 w-full rounded bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 active:scale-95 transition cursor-pointer'>
+            <Star/>Create Story
+          </button>
+    
       </div>
     </div>
   )
-}
+} 
 
 export default StoryModal
