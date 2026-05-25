@@ -1,48 +1,66 @@
 # Groove 🎵
 
-Groove is a modern social media web application built with React and Vite. It offers a clean, responsive interface for discovering new content, connecting with users, and sharing updates.
+Groove is a React + Vite social media web app with a clean dashboard-style UI, user authentication, and a responsive mobile-first layout.
 
 ## 🚀 Features
 
-- Responsive social media layout
-- User authentication via Clerk
+- Responsive social media interface
+- User authentication using Clerk
 - Client-side routing with React Router
-- Reusable UI components and sidebar navigation
-- Fast development workflow with Vite
-- Tailwind CSS styling and Lucide icons
+- Reusable components for stories, feed, chat, profile, and navigation
+- Tailwind CSS styling with Lucide icons
+- Fast local development with Vite
+
+## 🧩 Pages Included
+
+- `Feed` - Main feed with posts and stories
+- `Discover` - Explore new content and users
+- `ChatBox` / `Messages` - Messaging interface
+- `Connections` - User connections and follow suggestions
+- `CreatePost` - Create new posts
+- `Profile` - User profile view
+- `Login` - Authentication entry point
 
 ## 🛠️ Tech Stack
 
-- React
+- React 19
 - Vite
 - Tailwind CSS
-- Clerk Authentication
-- React Router
+- Clerk (`@clerk/react`)
+- React Router DOM
 - Lucide React Icons
+- Moment.js
+- ESLint
 
 ## 📦 Setup
 
 1. Clone the repository:
 
-```bash
+   ```bash
 git clone <your-repo-url>
 ```
 
 2. Change into the client folder:
 
-```bash
+   ```bash
 cd client
 ```
 
 3. Install dependencies:
 
-```bash
+   ```bash
 npm install
 ```
 
-4. Start the development server:
+4. Create a `.env` file and add your Clerk publishable key:
 
-```bash
+   ```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
+```
+
+5. Start the development server:
+
+   ```bash
 npm run dev
 ```
 
@@ -51,27 +69,20 @@ npm run dev
 - `npm run dev` - Start the Vite development server
 - `npm run build` - Build the production bundle
 - `npm run preview` - Preview the production build locally
-
-## 🔐 Environment Variables
-
-Create a `.env` file in the `client` folder and add your Clerk publishable key:
-
-```env
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
-```
+- `npm run lint` - Run ESLint across the project
 
 ## 📁 Project Structure
 
 - `src/components` - Reusable UI components
-- `src/pages` - Page-level views for routing
+- `src/pages` - Route-driven page views
 - `src/assets` - Static assets and helper data
+- `src/main.jsx` - App entry point
 - `src/index.css` - Global styles
-- `src/main.jsx` - Application entry point
 
 ## 💡 Notes
 
-- Ensure the backend and authentication services are configured if the app uses a separate API server.
-- Update the Clerk key in `.env` before running the app.
+- Add your Clerk publishable key to `.env` before running the app.
+- If there is a backend service, make sure its endpoints are configured separately.
 
 ## 📄 License
 
