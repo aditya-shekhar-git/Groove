@@ -84,7 +84,7 @@ const StoryModal = ({setShowModal, fetchStories}) => {
               success:<p>Story Added</p>,
               error:(e)=><p>{e.message}</p>
             })
-          }} className='flex items-center justify-center text-white py-3 mt-4 gap-2 w-full rounded bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 active:scale-95 transition cursor-pointer'>
+          }} className='flex items-center justify-center text-white py-3 mt-4 gap-2 w-full rounded bg-linear-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 active:scale-95 transition cursor-pointer'>
             <Star/>Create Story
           </button>
     
