@@ -10,6 +10,12 @@ Groove is a React + Vite social media web app with a clean dashboard-style UI, u
 - Reusable components for stories, feed, chat, profile, and navigation
 - Tailwind CSS styling with Lucide icons
 - Fast local development with Vite
+ - Story viewer with modal and timed/story navigation
+ - Profile modal for quick user previews and actions
+ - Notifications and toasts (react-hot-toast)
+ - Real-time-style messaging UI and recent messages panel
+ - Loading states and skeleton components for better UX
+ - Post creation, reactions, and contextual menu actions
 
 ## 🧩 Pages Included
 
@@ -21,6 +27,14 @@ Groove is a React + Vite social media web app with a clean dashboard-style UI, u
 - `Profile` - User profile view
 - `Login` - Authentication entry point
 
+Extras and UI components included:
+
+- StoriesBar / StoryModal / StoryViewer
+- ProfileModal / UserProfileInfo
+- PostCard and CreatePost flow
+- RecentMessages and ChatBox UI
+- Loading, Feedback and utility components
+
 ## 🛠️ Tech Stack
 
 - React 19
@@ -31,6 +45,8 @@ Groove is a React + Vite social media web app with a clean dashboard-style UI, u
 - Lucide React Icons
 - Moment.js
 - ESLint
+ - React Hot Toast (`react-hot-toast`) for notifications
+ - `@tailwindcss/vite` plugin for Tailwind + Vite integration
 
 ## 📦 Setup
 
@@ -71,6 +87,8 @@ npm run dev
 - `npm run preview` - Preview the production build locally
 - `npm run lint` - Run ESLint across the project
 
+Tip: use `npm run dev` during UI work and `npm run build` when preparing a production bundle.
+
 ## 📁 Project Structure
 
 - `src/components` - Reusable UI components
@@ -78,6 +96,11 @@ npm run dev
 - `src/assets` - Static assets and helper data
 - `src/main.jsx` - App entry point
 - `src/index.css` - Global styles
+
+Key component groups:
+
+- `src/components` — Reusable UI pieces (stories, profile modal, post cards, messages, etc.)
+- `src/pages` — Route-driven page views
 
 ## 💡 Notes
 
