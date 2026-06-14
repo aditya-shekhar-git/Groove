@@ -97,7 +97,16 @@ export const discoverUsers = async (req,res) => {
     try {
         const {userId} = req.auth();
         const {input} = req.body;
-        
+
+        const allUsers = await User.find({
+            
+            $or: [
+                {username : new RegExp(input , 'i')},
+                {email : new RegExp(input , 'i')},
+                {location : new RegExp(input , 'i')},
+                {full_name : new RegExp(input , 'i')},
+            ]
+        })
 
     } catch (error) {
         console.log(error);
