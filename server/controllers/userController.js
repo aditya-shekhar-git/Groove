@@ -108,6 +108,61 @@ export const discoverUsers = async (req,res) => {
             ]
         })
 
+        const filterUsers = allUsers.filter(user => user._id !==userId);
+        res.json({success:true,user:filterUsers});
+
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:error.message})
+    }
+}
+
+//Follow User
+
+export const followUsers = async (req,res) => {
+    try {
+        const {userId} = req.auth();
+        const {id} = req.body;
+
+        const user = await User.findById(userId);
+
+        if(user.following.includes(id)){
+            return res.json({success:false,message:`You are already following ${user.username}`})
+        }
+
+        user.following.push(id);
+        await user.save()
+
+        const toUser = await User.findById(id)
+        toUser.followers.push(userId);
+    
+
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:error.message})
+    }
+}
+
+//Unfollow User
+
+export const unfollowUsers = async (req,res) => {
+    try {
+        const {userId} = req.auth();
+        const {id} = req.body;
+
+        const user = await User.findById(userId);
+
+        if(user.following.includes(id)){
+            return res.json({success:false,message:`You are already following ${user.username}`})
+        }
+
+        user.following.push(id);
+        await user.save()
+
+        const toUser = await User.findById(id)
+        toUser.followers.push(userId);
+    
+
     } catch (error) {
         console.log(error);
         res.json({success:false,message:error.message})
