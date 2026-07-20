@@ -24,27 +24,32 @@ export const updateUserData = async (req,res) => {
 
     try {
         const {userId} = req.auth();
-        const {username,bio,location,full_name} = req.body;
+        const {username: requestUsername,bio: requestBio,location: requestLocation,full_name: requestFullName} = req.body;
 
         const tempUser = await User.findById(userId);
-
-        !username && (username = tempUser.username)
-
-        if(tempUser.username !== User.findOne(username)){
-            const user = User.findOne(username)
-            if(user){
-                username = tempUser.username;
-            }
+        if (!tempUser) {
+            return res.json({ success:false, message:'User not found' });
         }
+
+        let username = requestUsername?.trim() || tempUser.username;
+        const bio = requestBio ?? tempUser.bio;
+        const location = requestLocation ?? tempUser.location;
+        const full_name = requestFullName ?? tempUser.full_name;
+
+        const existingUser = await User.findOne({ username });
+        if (existingUser && existingUser._id.toString() !== userId) {
+            username = tempUser.username;
+        }
+
         const updatedData = {
             username,
-            bio,    
+            bio,
             location,
             full_name
         }
 
         const profile = req.files.profile && req.files.profile[0]
-        const cover = req.files.profile && req.files.profile[0]
+        const cover = req.files.cover && req.files.cover[0]
 
         if(profile){
             const buffer = fs.readFileSync(profile.path)
@@ -158,10 +163,13 @@ export const unfollowUsers = async (req,res) => {
         await user.save();
 
         const toUser = await User.findById(id);
-        toUser.followers = toUser.followers.filter(user => user !==userId);
-        await user.save();
+        if (!toUser) {
+            return res.json({ success:false, message:'Target user not found' });
+        }
+        toUser.followers = toUser.followers.filter(user => user !== userId);
+        await toUser.save();
 
-        res.json({success:false,message:`You are no longer following ${userId}`})
+        res.json({success:true,message:`You are no longer following ${id}`})
 
     } catch (error) {
         console.log(error);
