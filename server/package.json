@@ -13,7 +13,7 @@
   "type": "module",
   "dependencies": {
     "@clerk/express": "^2.1.23",
-    "@imagekit/nodejs": "^7.7.0",
+    "@imagekit/nodejs": "^7.10.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
