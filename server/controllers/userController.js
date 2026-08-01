@@ -2,6 +2,7 @@ import path from 'path';
 import imagekit from '../configs/imageKit.js';
 import User from '../models/User.js'
 import fs from'fs'
+import Connection from '../models/Connection.js';
 
 export const getUserData = async (req,res) => {
 
@@ -10,7 +11,7 @@ export const getUserData = async (req,res) => {
         const user = await User.findById(userId)
 
         if(!user){
-            return res.json({success:false,message:"user not fount"})
+            return res.json({success:false,message:"user not found"})
         }
         res.json({success:true,user})
     } catch (error) {
@@ -24,7 +25,7 @@ export const updateUserData = async (req,res) => {
 
     try {
         const {userId} = req.auth();
-        const {username: requestUsername,bio: requestBio,location: requestLocation,full_name: requestFullName} = req.body;
+        let {username: requestUsername,bio: requestBio,location: requestLocation,full_name: requestFullName} = req.body;
 
         const tempUser = await User.findById(userId);
         if (!tempUser) {
@@ -38,7 +39,10 @@ export const updateUserData = async (req,res) => {
 
         const existingUser = await User.findOne({ username });
         if (existingUser && existingUser._id.toString() !== userId) {
-            username = tempUser.username;
+          return res.status(400).json({
+          success: false,
+          message: "Username is already taken."
+          });
         }
 
         const updatedData = {
@@ -175,4 +179,30 @@ export const unfollowUsers = async (req,res) => {
         console.log(error);
         res.json({success:false,message:error.message})
     }  
+}
+
+
+//Send Connection Request
+
+export const sendConnectionRequest = async (req,res) => {
+    
+    try {
+        
+        const{userId} = req.auth();
+        const {id} = req.body;
+
+        // Limiting number of connection requests in last 24 hrs
+        const last24Hours = new Date(Date.now() - 24*60*60*1000)
+        const connectionRequests = await Connection.find({from_user_id:userId,created_at:{$gt:last24Hours}})
+
+        if(connectionRequests.length>=20){
+            return res.json({success:false,message:'Connection request limit exceded for last 24 hours'})
+        }
+
+        //Check if users are already connected
+        
+
+    } catch (error) {
+        
+    }
 }
