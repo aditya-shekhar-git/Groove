@@ -4,7 +4,7 @@ import User from '../models/User.js'
 import fs from'fs'
 import Connection from '../models/Connection.js';
 import { connect } from 'http2';
-import { connection } from 'mongoose';
+import { mongoose } from 'mongoose';
 
 export const getUserData = async (req,res) => {
 
