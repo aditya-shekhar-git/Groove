@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 //Create a transporter object using the SMTP settings
 
 const transporter = nodemailer.createTransport({
-  host: "",
+  host: "smtp-relay.brevo.com",
   port: 587,
   auth: {
     user: "",
@@ -20,3 +20,5 @@ const sendEmail = async ({to,subject,body}) => {
     })
     return response
 }
+
+export default sendEmail;
