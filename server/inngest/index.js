@@ -114,9 +114,12 @@ const syncUserDeletion = inngest.createFunction(
 );
 
 //Inngest function to send reminder whne a new connection in added
+// Inngest function to send reminder when a new connection is added
 const sendConnectionRequestReminder = inngest.createFunction(
-  { id: "send-new-connection-request-reminder" },
-  { event: "app/connection-request" },
+  {
+    id: "send-new-connection-request-reminder",
+    triggers: [{ event: "app/connection-request" }],
+  },
   async ({ event, step }) => {
     const { connectionId } = event.data;
 
@@ -175,7 +178,7 @@ const sendConnectionRequestReminder = inngest.createFunction(
         "from_user_id to_user_id"
       );
 
-      if (connection.status == "accepted") {
+      if (connection.status === "accepted") {
         return { message: "Connection Already Accepted" };
       }
 
@@ -214,7 +217,7 @@ const sendConnectionRequestReminder = inngest.createFunction(
         body,
       });
 
-      return {message:"Reminder Sent."}
+      return { message: "Reminder Sent." };
     });
   }
 );
