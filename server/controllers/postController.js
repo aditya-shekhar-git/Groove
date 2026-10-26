@@ -4,48 +4,58 @@ import Post from '../models/Post.js';
 import User from '../models/User.js';
 
 // Add Post
-export const addPost = async (req,res) => {
+
+export const addPost = async (req, res) => {
     try {
-        
-        const {userId} = req.auth();
-        const { content , post_type} = req.body;
-        const images = req.files;
+        const { userId } = req.auth();
+        const { content, postType } = req.body;
+        const images = req.files || [];
 
-        let image_urls = []
+        let image_urls = [];
 
-        if(images.length){
+        if (images.length > 0) {
             image_urls = await Promise.all(
-                images.map(async(image) => {
-                    const fileBuffer = fs.readFileSync(image.path)
-                    const response = await imagekit.upload({
-                file : fileBuffer,
-                fileName : image.originalname,
-            })
-            const url = await imagekit.url({
-                path:response.filePath,
-                transformation:[
-                    {quality:'auto'},
-                    {width:'512'},
-                    {format:'webp'}
-                ]
-            })
-            return url  
+                images.map(async (image) => {
+                    const fileBuffer = fs.readFileSync(image.path);
+
+                    console.log('Uploading:', image.originalname);
+                    console.log('File size:', fileBuffer.length);
+
+                    const response = await imagekit.files.upload({
+                        file: fileBuffer.toString('base64'),
+                        fileName: image.originalname,
+                    });
+
+                    console.log('Uploaded:', response.filePath);
+
+                    return `${process.env.IMAGEKIT_URL_ENDPOINT}${response.filePath}`;
                 })
-            )
+            );
         }
-        await Post.create({
-            user : userId,
+
+        const post = await Post.create({
+            user: userId,
             content,
             image_urls,
-            post_type
+            postType
+        });
 
-        })
-        res.json({ success:true ,message:"Post created Successfully"})
+        return res.status(201).json({
+            success: true,
+            message: 'Post created successfully',
+            post
+        });
+
     } catch (error) {
-        console.log(error);
-        res.json({ success:false ,message:error})
+        console.error('Add post error:', error);
+
+        return res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to create post'
+        });
     }
-}
+};
+
 
 //Get Posts
 export const getFeedPosts = async (req,res) => {
@@ -54,7 +64,7 @@ export const getFeedPosts = async (req,res) => {
         const user = await User.findById(userId)
 
         //User connections and followings
-        const userIds = [userId, ...user.connections, ...user.following]
+        const userIds = [userId, ...(user.connections || []), ...(user.following || [])]
         const posts = await Post.find({user:{$in:userIds}}).populate('user').sort({createdAt:-1});
 
         res.json({success:true,posts})
