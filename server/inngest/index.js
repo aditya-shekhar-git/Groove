@@ -226,68 +226,84 @@ const sendConnectionRequestReminder = inngest.createFunction(
 
 // Inngest Function to delete story ater 24 hours
 const deleteStory = inngest.createFunction(
-  {id:'story-delete'},
-  {event:'app/story.delete'},
-  async ({event,step}) => {
-    const {stroyId} = event.data;
-    const in24Hours = new Date(Date.now() + 24*60*60*1000)
-    await step.sleepUntil('wait-for-24-hours',in24Hours)
-    await step.run("delete-story",async () => {
-      await Story.findByIdAndDelete(stroyId)
-      return {message:"Story deleted."}
-    })
+  {
+    id: "story-delete",
+    triggers: [{ event: "app/story.delete" }],
+  },
+  async ({ event, step }) => {
+    const { storyId } = event.data;
+    const in24Hours = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await step.sleepUntil("wait-for-24-hours", in24Hours);
+
+    await step.run("delete-story", async () => {
+      await connectDB();
+      await Story.findByIdAndDelete(storyId);
+      return { message: "Story deleted." };
+    });
   }
-)
+);
 
 const sendNotificationOfUnseenMessages = inngest.createFunction(
-  { id: "send-unseen-messages-notification"},
-  { cron : "TZ/America/New_York 0 9 * * *"}, // Every day a 9 AM
+  {
+    id: "send-unseen-messages-notification",
+    triggers: {
+      cron: "TZ=America/New_York 0 9 * * *"
+    }
+  },
 
-  async ({step}) => {
-    const messages = await Message.find({seen: false}).populate('to_user_id');
-    const unseenCount = {}
+  async ({ step }) => {
+    // Fetch unseen messages
+    const messages = await step.run("fetch-unseen-messages", async () => {
+      return await Message.find({ seen: false }).populate("to_user_id");
+    });
 
-    messages.map(message=>{
-      unseenCount[message.to_user_id._id] = (unseenCount[message.to_user_id._id] || 0) + 1;
-    })
+    // Count messages per recipient
+    const unseenCount = {};
 
+    messages.forEach((message) => {
+      if (!message.to_user_id) return;
+
+      const userId = message.to_user_id._id.toString();
+
+      unseenCount[userId] = (unseenCount[userId] || 0) + 1;
+    });
+
+    // Send notification emails
     for (const userId in unseenCount) {
-      
       const user = await User.findById(userId);
+
+      if (!user || !user.email) continue;
 
       const subject = `${unseenCount[userId]} Unseen messages`;
 
-      
-const body = `
-<div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-    <h2>Hello ${user.name || "there"}!</h2>
+      const body = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+          <h2>Hello ${user.name || "there"}!</h2>
+          <p>You have <strong>${unseenCount[userId]} unseen messages</strong> waiting for you.</p>
+          <p>Don't miss out on your conversations. Come back and check your messages!</p>
+          <a href="${process.env.FRONTEND_URL}/messages"
+             style="display: inline-block; padding: 10px 20px; background: #4f46e5; color: white; text-decoration: none; border-radius: 5px;">
+            View Messages
+          </a>
+          <p style="margin-top: 25px; font-size: 12px; color: #888;">
+            Thank you for using MessageHub!
+          </p>
+        </div>
+      `;
 
-    <p>You have <strong>${unseenCount[userId]} unseen messages</strong> waiting for you.</p>
-
-    <p>Don't miss out on your conversations. Come back and check your messages!</p>
-
-    <a href="${process.env.FRONTEND_URL}/messages"
-       style="display: inline-block; padding: 10px 20px; background: #4f46e5; color: white; text-decoration: none; border-radius: 5px;">
-        View Messages
-    </a>
-
-    <p style="margin-top: 25px; font-size: 12px; color: #888;">
-        Thank you for using MessageHub!
-    </p>
-</div>
-`;
-
-    await sendEmail({
-      to: user.email,
-      subject,
-      body
-    })
-      
+      await step.run(`send-email-${userId}`, async () => {
+        return await sendEmail({
+          to: user.email,
+          subject,
+          body
+        });
+      });
     }
 
-    return {message:"Notification sent."}
+    return { message: "Notifications sent." };
   }
-)
+);
 
 export const functions = [
   syncUserCreation,
