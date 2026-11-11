@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import Connection from "../models/Connection.js";
 import sendEmail from "../configs/nodeMailer.js";
 import Story from "../models/Story.js";
+import Message from "../models/Message.js";
 
 export const inngest = new Inngest({
   id: "Groove",
@@ -224,7 +225,7 @@ const sendConnectionRequestReminder = inngest.createFunction(
 );
 
 // Inngest Function to delete story ater 24 hours
-const deletStory = inngest.createFunction(
+const deleteStory = inngest.createFunction(
   {id:'story-delete'},
   {event:'app/story.delete'},
   async ({event,step}) => {
@@ -238,11 +239,63 @@ const deletStory = inngest.createFunction(
   }
 )
 
+const sendNotificationOfUnseenMessages = inngest.createFunction(
+  { id: "send-unseen-messages-notification"},
+  { cron : "TZ/America/New_York 0 9 * * *"}, // Every day a 9 AM
+
+  async ({step}) => {
+    const messages = await Message.find({seen: false}).populate('to_user_id');
+    const unseenCount = {}
+
+    messages.map(message=>{
+      unseenCount[message.to_user_id._id] = (unseenCount[message.to_user_id._id] || 0) + 1;
+    })
+
+    for (const userId in unseenCount) {
+      
+      const user = await User.findById(userId);
+
+      const subject = `${unseenCount[userId]} Unseen messages`;
+
+      
+const body = `
+<div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+    <h2>Hello ${user.name || "there"}!</h2>
+
+    <p>You have <strong>${unseenCount[userId]} unseen messages</strong> waiting for you.</p>
+
+    <p>Don't miss out on your conversations. Come back and check your messages!</p>
+
+    <a href="${process.env.FRONTEND_URL}/messages"
+       style="display: inline-block; padding: 10px 20px; background: #4f46e5; color: white; text-decoration: none; border-radius: 5px;">
+        View Messages
+    </a>
+
+    <p style="margin-top: 25px; font-size: 12px; color: #888;">
+        Thank you for using MessageHub!
+    </p>
+</div>
+`;
+
+    await sendEmail({
+      to: user.email,
+      subject,
+      body
+    })
+      
+    }
+
+    return {message:"Notification sent."}
+  }
+)
+
 export const functions = [
   syncUserCreation,
   syncUserUpdation,
   syncUserDeletion,
-  sendConnectionRequestReminder 
+  sendConnectionRequestReminder,
+  deleteStory,
+  sendNotificationOfUnseenMessages 
 
 ];
 
