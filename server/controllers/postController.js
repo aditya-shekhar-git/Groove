@@ -8,7 +8,7 @@ import User from '../models/User.js';
 export const addPost = async (req, res) => {
     try {
         const { userId } = req.auth();
-        const { content, postType } = req.body;
+        const { content, post_type: postType } = req.body
         const images = req.files || [];
 
         let image_urls = [];
@@ -37,7 +37,7 @@ export const addPost = async (req, res) => {
             user: userId,
             content,
             image_urls,
-            postType
+            postType,
         });
 
         return res.status(201).json({

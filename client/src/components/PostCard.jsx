@@ -4,6 +4,9 @@ import React, { useState } from 'react'
 import { dummyUserData } from '../assets/assets';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'
+import { useAuth } from '@clerk/react';
+import api from '../api/axios';
+import toast from 'react-hot-toast';
 
 const PostCard = ({ post }) => {
 
@@ -15,8 +18,28 @@ const PostCard = ({ post }) => {
 const [likes,setLikes]=useState(post.likes_count)
 const currentUser = useSelector((state)=>state.user.value)
 
+const {getToken} = useAuth();
+
 const handleLike = async () => {
   
+  try {
+    const {data} = await api.post('/api/post/like',{postId: post._id},{headers: {Authorization:`Bearer ${await getToken()}`}})
+
+    if( data ){
+      toast.success(data.message)
+      setLikes(prev=>{
+        if(prev.includes(currentUser._id)){
+          return prev.filter(id=> id!== currentUser._id)
+        }else{
+          return [...prev,currentUser._id]
+        }
+      })
+    }else{
+      toast(data.message)
+    }
+  } catch (error) {
+    toast.error(error.message)
+  }
 }
 
 const navigate=useNavigate();
@@ -61,11 +84,11 @@ const navigate=useNavigate();
         </div>
          <div className='flex items-center gap-1'>
             <MessageCircle className='w-4 h-4'/>
-           <spna>{12}</spna>
+           <span>{12}</span>
          </div>
          <div className='flex items-center gap-1'>
             <Share2 className='w-4 h-4'/>
-           <spna>{7}</spna>
+           <span>{7}</span>
          </div>
 
       </div>

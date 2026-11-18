@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 const StoryViewer = ({viewStory ,setViewStory}) => {
 
   const [progress,setProgress] = useState(0);
+  console.log('StoryViewer rendering', viewStory)
   
   useEffect(() => {
     let timer

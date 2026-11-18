@@ -1,10 +1,9 @@
 import path from 'path';
 import imagekit from '../configs/imageKit.js';
+import { toFile } from '@imagekit/nodejs';
 import User from '../models/User.js'
-import fs from'fs'
+import fs from 'fs'
 import Connection from '../models/Connection.js';
-import { connect } from 'http2';
-import { mongoose } from 'mongoose';
 import Post from '../models/Post.js';
 import { inngest } from '../inngest/index.js';
 
@@ -43,7 +42,7 @@ export const updateUserData = async (req,res) => {
 
         const existingUser = await User.findOne({ username });
         if (existingUser && existingUser._id.toString() !== userId) {
-          return res.status(400).json({
+          return res.status(400).json({ 
           success: false,
           message: "Username is already taken."
           });
@@ -56,34 +55,39 @@ export const updateUserData = async (req,res) => {
             full_name
         }
 
-        const profile = req.files.profile && req.files.profile[0]
-        const cover = req.files.cover && req.files.cover[0]
+        const profile = req.files?.profile?.[0];
+        const cover = req.files?.cover?.[0];
 
         if(profile){
             const buffer = fs.readFileSync(profile.path)
-            const response = await imagekit.upload({
-                file : buffer,
-                fileName : profile.originalname,
+            const response = await imagekit.files.upload({
+              file: await toFile(buffer, profile.originalname),
+              fileName: profile.originalname,
             })
-            const url = await imagekit.url({
-                path:response.filePath,
+
+            const url = imagekit.helper.buildSrc({
+                urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+                src: response.filePath,
                 transformation:[
-                    {quality:'auto'},
-                    {width:'512'},
+                    {quality:80},
+                    {width:512},
                     {format:'webp'}
                 ]
             })
             updatedData.profile_picture = url;
+            fs.unlink(profile.path, () => {});
         }
 
         if(cover){
             const buffer = fs.readFileSync(cover.path)
-            const response = await imagekit.upload({
-                file : buffer,
+            const response = await imagekit.files.upload({
+                file: await toFile(buffer, cover.originalname),      
                 fileName : cover.originalname,
             })
-            const url = await imagekit.url({
-                path:response.filePath,
+
+            const url = imagekit.helper.buildSrc({
+                urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+                src: response.filePath,
                 transformation:[
                     {quality:'auto'},
                     {width:'1280'},
@@ -91,6 +95,7 @@ export const updateUserData = async (req,res) => {
                 ]
             })
             updatedData.cover_photo = url;
+            fs.unlink(cover.path, () => {});
         }
 
         const user = await User.findByIdAndUpdate(userId,updatedData,{new:true})
@@ -150,7 +155,7 @@ export const followUsers = async (req,res) => {
         toUser.followers.push(userId);
         await toUser.save();
 
-        res.json({success:true,message:`Now you are ollowing ${user.username}`})
+        res.json({success:true,message:`Now you are following ${user.username}`})
     
 
     } catch (error) {

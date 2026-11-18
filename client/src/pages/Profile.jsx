@@ -32,7 +32,7 @@ const Profile = () => {
         setUser(data.profile)
         setPosts(data.posts)
       }else{
-        toast.error(data.message)
+        toast(data.message)
       }
     } catch (error) {
       toast.error(error.message)
